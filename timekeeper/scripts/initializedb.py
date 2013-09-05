@@ -15,7 +15,12 @@ from ..models import (
     Base,
     Project,
     BillingPeriod,
+    Employee,
     )
+
+from ..security import (
+        generate_user_password,
+        )
 
 
 def usage(argv):
@@ -37,5 +42,9 @@ def main(argv=sys.argv):
     with transaction.manager:
         project = Project(name="other", description="Work outside of a registered project.")
         period = BillingPeriod(start_date=datetime.datetime.utcnow(), description="")
+        admin = Employee(login='admin',
+                         password_hash=generate_user_password('timekeeper'),
+                         name="Administrator")
         DBSession.add(project)
         DBSession.add(period)
+        DBSession.add(admin)

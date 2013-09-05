@@ -35,12 +35,17 @@ class Employee(Base):
     __tablename__ = 'employee'
     id = Column(Integer, primary_key=True)
     login = Column(Text, unique=True, nullable=False)
+    password_hash = Column(Text, nullable=False)
     name = Column(Text, nullable=False)
-    active = Column(Boolean, nullable=False, default=True)
+    active = Column(Boolean, nullable=False)
+    admin = Column(Boolean, nullable=False)
 
-    def __init__(self, login, name):
+    def __init__(self, login, password_hash, name):
         self.login = login
+        self.password_hash = password_hash
         self.name = name
+        self.active = True
+        self.admin = False
 
 class WorkSession(Base):
     __tablename__ = 'work_session'

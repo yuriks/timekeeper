@@ -1,30 +1,48 @@
 from pyramid.response import Response
-from pyramid.view import view_config
-
+from pyramid.view import (
+        view_config,
+        forbidden_view_config,
+        )
+from pyramid.security import (
+        remember,
+        forget,
+        )
+from pyramid.httpexceptions import (
+        HTTPFound,
+        )
 from sqlalchemy.exc import DBAPIError
 
 from .models import (
     DBSession,
     )
 
+from .security import authenticate_user
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
-def my_view(request):
-    return {'one': 'foo', 'project': 'timekeeper'}
+@view_config(route_name='login', renderer='templates/login.pt')
+@forbidden_view_config(renderer='templates/login.pt')
+def login(request):
+    message = ''
+    login = ''
 
-conn_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
+    if request.method == 'POST':
+        login = request.params['login']
+        password = request.params['password']
 
-1.  You may need to run the "initialize_timekeeper_db" script
-    to initialize your database tables.  Check your virtual 
-    environment's "bin" directory for this script and try to run it.
+        user = authenticate_user(login, password)
+        if user:
+            headers = remember(request, user.id)
+            return HTTPFound(location = request.application_url,
+                             headers = headers)
+        message = "Login failed."
 
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
+    return dict(
+            message = message,
+            url = request.route_url('login'),
+            login = login,
+            )
 
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
-
+@view_config(route_name='logout')
+def logout(request):
+    headers = forget(request)
+    return HTTPFound(location = request.application_url,
+                     headers = headers)
