@@ -18,8 +18,8 @@ from .models import (
 
 from .security import authenticate_user
 
-@view_config(route_name='login', renderer='templates/login.pt')
-@forbidden_view_config(renderer='templates/login.pt')
+@view_config(route_name='login', renderer='timekeeper:templates/login.mak')
+@forbidden_view_config(renderer='timekeeper:templates/login.mak')
 def login(request):
     message = ''
     login = ''
