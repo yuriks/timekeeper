@@ -27,7 +27,7 @@ def main(global_config, **settings):
     config.set_authorization_policy(authz_policy)
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('dashboard', '/')
-    config.add_route('project_clockin', '/project/{projectname}/clock_in')
+    config.add_route('clock_in', '/project/{projectname}/clock_in')
     config.add_route('admin', '/admin')
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')

@@ -44,7 +44,7 @@ def dashboard(request):
             current_project_name=current_project_name,
             )
 
-@view_config(route_name='project_clockin', renderer='timekeeper:templates/dashboard.mak',
+@view_config(route_name='clock_in', renderer='timekeeper:templates/dashboard.mak',
              permission='clock')
 def clock_in(request):
     pass

@@ -9,7 +9,7 @@
 		<p>Welcome ${user.name}. Current clocked in project: ${current_project_name}.</p>
 		<ul>
 			% for project in projects:
-			<li><a href="${request.route_url('project_clockin', projectname=project.name)}">${project.name}</a></li>
+			<li><a href="${request.route_url('clock_in', projectname=project.name)}">${project.name}</a></li>
 			% endfor
 			<li><a href="${''}">Clock Out</a></li>
 		</ul>
