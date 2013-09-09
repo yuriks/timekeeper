@@ -13,6 +13,7 @@ from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
     relationship,
+    object_session,
     )
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -46,6 +47,9 @@ class Employee(Base):
         self.name = name
         self.active = True
         self.admin = False
+
+    def get_current_session(self):
+        return object_session(self).query(WorkSession).filter_by(employee_id=self.id, end_time=None).first()
 
 class WorkSession(Base):
     __tablename__ = 'work_session'

@@ -26,10 +26,11 @@ from .security import authenticate_user
              permission='clock')
 def dashboard(request):
     user_id = authenticated_userid(request)
+
     user = DBSession.query(Employee).get(user_id)
     projects = DBSession.query(Project).all()
 
-    current_session = DBSession.query(WorkSession).filter_by(employee_id=user.id, end_time=None).first()
+    current_session = user.get_current_session()
 
     if current_session is not None:
         current_project_name = current_session.project.name
