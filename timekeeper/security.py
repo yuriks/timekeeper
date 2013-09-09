@@ -3,6 +3,7 @@ from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import (
         Allow,
         Everyone,
+        Authenticated,
         )
 
 from .models import (
@@ -39,7 +40,7 @@ def authentication_policy(userid, request):
 
 class RootFactory(object):
     __acl__ = [
-            (Allow, Everyone, 'clock'),
+            (Allow, Authenticated, 'clock'),
             (Allow, 'group:admins', 'report'),
             (Allow, 'group:admins', 'manage'),
             ]
