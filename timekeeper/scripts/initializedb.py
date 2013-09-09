@@ -44,7 +44,8 @@ def main(argv=sys.argv):
         period = BillingPeriod(start_date=datetime.datetime.utcnow(), description="")
         admin = Employee(login='admin',
                          password_hash=generate_user_password('timekeeper'),
-                         name="Administrator")
+                         name="Administrator",
+                         hourly_rate=0)
         DBSession.add(project)
         DBSession.add(period)
         DBSession.add(admin)

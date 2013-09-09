@@ -11,7 +11,7 @@
 			% for project in projects:
 			<li><a href="${request.route_url('clock_in', projectname=project.name)}">${project.name}</a></li>
 			% endfor
-			<li><a href="${''}">Clock Out</a></li>
+			<li><a href="${request.route_url('clock_out')}">Clock Out</a></li>
 		</ul>
 		<p>
 			<a href="${request.route_url('logout')}">Logout</a> -

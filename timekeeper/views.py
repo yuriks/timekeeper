@@ -1,3 +1,5 @@
+import datetime
+
 from pyramid.response import Response
 from pyramid.view import (
         view_config,
@@ -18,6 +20,7 @@ from .models import (
     Employee,
     Project,
     WorkSession,
+    BillingPeriod,
     )
 
 from .security import authenticate_user
@@ -45,10 +48,32 @@ def dashboard(request):
             current_project_name=current_project_name,
             )
 
-@view_config(route_name='clock_in', renderer='timekeeper:templates/dashboard.mak',
+@view_config(route_name='clock_in',
              permission='clock')
 def clock_in(request):
-    pass
+    user_id = authenticated_userid(request)
+    user = DBSession.query(Employee).get(user_id)
+    user.close_current_session()
+
+    project_name = request.matchdict['projectname']
+    project = Project.get_by_name(project_name)
+
+    session = WorkSession(
+            employee=user,
+            project=Project.get_by_name(project_name),
+            start_time=datetime.datetime.utcnow(),
+            billing_period=BillingPeriod.get_current())
+    DBSession.add(session)
+
+    return HTTPFound(location=request.route_url('dashboard'))
+
+@view_config(route_name='clock_out',
+             permission='clock')
+def clock_out(request):
+    user_id = authenticated_userid(request)
+    user = DBSession.query(Employee).get(user_id)
+    user.close_current_session()
+    return HTTPFound(location=request.route_url('dashboard'))
 
 @view_config(route_name='admin', renderer='timekeeper:templates/dashboard.mak',
              permission='manage')
