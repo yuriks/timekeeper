@@ -2,6 +2,7 @@ import os
 import sys
 import transaction
 import datetime
+import pytz
 
 from sqlalchemy import engine_from_config
 
@@ -41,7 +42,7 @@ def main(argv=sys.argv):
     Base.metadata.create_all(engine)
     with transaction.manager:
         project = Project(name="other", description="Work outside of a registered project.")
-        period = BillingPeriod(start_date=datetime.datetime.utcnow(), description="")
+        period = BillingPeriod(start_date=pytz.utc.localize(datetime.datetime.utcnow()), description="")
         admin = Employee(login='admin',
                          password_hash=generate_user_password('timekeeper'),
                          name="Administrator",
