@@ -1,8 +1,6 @@
 import os
 import sys
 import transaction
-import datetime
-import pytz
 
 from sqlalchemy import engine_from_config
 
@@ -23,6 +21,8 @@ from ..security import (
         generate_user_password,
         )
 
+from .. import util
+
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
@@ -42,7 +42,7 @@ def main(argv=sys.argv):
     Base.metadata.create_all(engine)
     with transaction.manager:
         project = Project(name="other", description="Work outside of a registered project.")
-        period = BillingPeriod(start_date=pytz.utc.localize(datetime.datetime.utcnow()), description="")
+        period = BillingPeriod(start_date=util.utcnow(), description="")
         admin = Employee(login='admin',
                          password_hash=generate_user_password('timekeeper'),
                          name="Administrator",

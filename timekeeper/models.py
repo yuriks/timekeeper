@@ -1,4 +1,3 @@
-import datetime
 import pytz
 
 from sqlalchemy import (
@@ -23,6 +22,8 @@ from sqlalchemy.orm import (
 from sqlalchemy.types import TypeDecorator
 
 from zope.sqlalchemy import ZopeTransactionExtension
+
+from . import util
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -105,7 +106,7 @@ class WorkSession(Base):
     def close_session(self, time=None):
         assert(self.end_time is None)
         if time is None:
-            time = pytz.utc.localize(datetime.datetime.utcnow())
+            tim = util.utcnow()
         self.end_time = time
 
 class BillingPeriod(Base):

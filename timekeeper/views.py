@@ -26,7 +26,7 @@ from .models import (
 
 from .security import authenticate_user
 
-from . import fuzzy_date
+from . import fuzzy_date, util
 
 @view_config(route_name='dashboard', renderer='timekeeper:templates/dashboard.mak',
              permission='clock')
@@ -54,7 +54,7 @@ def clock_in(request):
     time_override = request.params.get('time_override', None)
     if time_override:
         localtz = pytz.timezone(request.registry.settings['local_timezone'])
-        current_datetime = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(localtz)
+        current_datetime = util.utcnow().astimezone(localtz)
 
         local_timestamp = fuzzy_date.parse_fuzzy_datetime(
                 request.params['time_override'], current_datetime)
@@ -62,7 +62,7 @@ def clock_in(request):
             raise ValueError('Invalid date format')
         timestamp = localtz.localize(local_timestamp).astimezone(pytz.utc)
     else:
-        timestamp = pytz.utc.localize(datetime.datetime.utcnow())
+        timestamp = util.utcnow()
 
     user.close_current_session(timestamp)
 
