@@ -24,8 +24,10 @@
 			</ul>
 		</form>
 		<p>
-			<a href="${request.route_url('logout')}">Logout</a> -
-			<a href="${request.route_url('admin')}">Admin</a>
+			<a href="${request.route_url('logout')}">Logout</a>
+			% if user.admin:
+				- <a href="${request.route_url('admin')}">Admin</a>
+			% endif
 		</p>
 	</body>
 </html>
