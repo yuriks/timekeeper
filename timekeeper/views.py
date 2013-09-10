@@ -39,7 +39,6 @@ def dashboard(request):
     current_session = user.get_current_session()
 
     return dict(
-            request=request, # For route_url
             message='',
             user=user,
             projects=projects,
