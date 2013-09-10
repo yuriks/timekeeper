@@ -44,31 +44,23 @@ def dashboard(request):
             current_session=user.get_current_session()
             )
 
-@view_config(route_name='clock_in',
-             permission='clock')
+@view_config(route_name='clock_in', request_method='POST', permission='clock')
 def clock_in(request):
     user_id = authenticated_userid(request)
     user = DBSession.query(Employee).get(user_id)
     user.close_current_session()
 
-    project_name = request.matchdict['projectname']
-    project = Project.get_by_name(project_name)
+    if 'projectname' in request.params:
+        project_name = request.params['projectname']
+        project = Project.get_by_name(project_name)
 
-    session = WorkSession(
-            employee=user,
-            project=Project.get_by_name(project_name),
-            start_time=pytz.utc.localize(datetime.datetime.utcnow()),
-            billing_period=BillingPeriod.get_current())
-    DBSession.add(session)
+        session = WorkSession(
+                employee=user,
+                project=Project.get_by_name(project_name),
+                start_time=pytz.utc.localize(datetime.datetime.utcnow()),
+                billing_period=BillingPeriod.get_current())
+        DBSession.add(session)
 
-    return HTTPFound(location=request.route_url('dashboard'))
-
-@view_config(route_name='clock_out',
-             permission='clock')
-def clock_out(request):
-    user_id = authenticated_userid(request)
-    user = DBSession.query(Employee).get(user_id)
-    user.close_current_session()
     return HTTPFound(location=request.route_url('dashboard'))
 
 @view_config(route_name='admin', renderer='timekeeper:templates/dashboard.mak',

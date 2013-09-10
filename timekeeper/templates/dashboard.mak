@@ -14,12 +14,14 @@
 				None.
 			% endif
 			</p>
-		<ul>
-			% for project in projects:
-			<li><a href="${request.route_url('clock_in', projectname=project.name)}">${project.name}</a></li>
-			% endfor
-			<li><a href="${request.route_url('clock_out')}">Clock Out</a></li>
-		</ul>
+		<form action="${request.route_url('clock_in')}" method="POST">
+			<ul>
+				% for project in projects:
+				<li><input type="submit" name="projectname" value="${project.name}"></li>
+				% endfor
+				<li><input type="submit" value="Clock Out"></li>
+			</ul>
+		</form>
 		<p>
 			<a href="${request.route_url('logout')}">Logout</a> -
 			<a href="${request.route_url('admin')}">Admin</a>
