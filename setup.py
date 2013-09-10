@@ -15,6 +15,7 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'passlib',
+    'pytz',
     ]
 
 setup(name='timekeeper',

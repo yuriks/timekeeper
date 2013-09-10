@@ -1,4 +1,5 @@
 import datetime
+import pytz
 
 from pyramid.response import Response
 from pyramid.view import (
@@ -35,17 +36,12 @@ def dashboard(request):
 
     current_session = user.get_current_session()
 
-    if current_session is not None:
-        current_project_name = current_session.project.name
-    else:
-        current_project_name = "None"
-
     return dict(
             request=request, # For route_url
             message='',
             user=user,
             projects=projects,
-            current_project_name=current_project_name,
+            current_session=user.get_current_session()
             )
 
 @view_config(route_name='clock_in',
@@ -61,7 +57,7 @@ def clock_in(request):
     session = WorkSession(
             employee=user,
             project=Project.get_by_name(project_name),
-            start_time=datetime.datetime.utcnow(),
+            start_time=pytz.utc.localize(datetime.datetime.utcnow()),
             billing_period=BillingPeriod.get_current())
     DBSession.add(session)
 

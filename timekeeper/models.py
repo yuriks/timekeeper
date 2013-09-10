@@ -1,4 +1,5 @@
 import datetime
+import pytz
 
 from sqlalchemy import (
     Column,
@@ -19,10 +20,24 @@ from sqlalchemy.orm import (
     object_session,
     )
 
+from sqlalchemy.types import TypeDecorator
+
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
+
+
+class UTCDateTime(TypeDecorator):
+    impl = DateTime
+
+    def process_bind_param(self, value, engine):
+        if value is not None:
+            return value.astimezone(pytz.utc)
+
+    def process_result_value(self, value, engine):
+        if value is not None:
+            return pytz.utc.localize(value)
 
 
 class Project(Base):
@@ -71,8 +86,8 @@ class WorkSession(Base):
     id = Column(Integer, primary_key=True)
     employee_id = Column(Integer, ForeignKey('employee.id'), nullable=False)
     project_id = Column(Integer, ForeignKey('project.id'), nullable=False)
-    start_time = Column(DateTime, nullable=False)
-    end_time = Column(DateTime, nullable=True)
+    start_time = Column(UTCDateTime, nullable=False)
+    end_time = Column(UTCDateTime, nullable=True)
     billing_period_id = Column(Integer, ForeignKey('billing_period.id'), nullable=False)
     hourly_rate = Column(Numeric(precision=6, scale=2), nullable=False)
 
@@ -90,14 +105,14 @@ class WorkSession(Base):
     def close_session(self, time=None):
         assert(self.end_time is None)
         if time is None:
-            time = datetime.datetime.utcnow()
+            time = pytz.utc.localize(datetime.datetime.utcnow())
         self.end_time = time
 
 class BillingPeriod(Base):
     __tablename__ = 'billing_period'
     id = Column(Integer, primary_key=True)
-    start_date = Column(DateTime, nullable=False)
-    close_date = Column(DateTime, nullable=True)
+    start_date = Column(UTCDateTime, nullable=False)
+    close_date = Column(UTCDateTime, nullable=True)
     description = Column(Text, nullable=False)
 
     def __init__(self, start_date, description):

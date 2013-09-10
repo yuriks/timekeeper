@@ -6,7 +6,14 @@
 	<body>
 		<h1>TimeKeeper</h1>
 		<span>${message}</span>
-		<p>Welcome ${user.name}. Current clocked in project: ${current_project_name}.</p>
+		<p>Welcome ${user.name}. Current clocked in project:
+			% if current_session is not None:
+				${current_session.project.name}, since
+				${h.format_localtime(req, current_session.start_time)}.
+			% else:
+				None.
+			% endif
+			</p>
 		<ul>
 			% for project in projects:
 			<li><a href="${request.route_url('clock_in', projectname=project.name)}">${project.name}</a></li>
