@@ -51,7 +51,8 @@ def clock_in(request):
     user_id = authenticated_userid(request)
     user = DBSession.query(Employee).get(user_id)
 
-    if 'time_override' in request.params:
+    time_override = request.params.get('time_override', None)
+    if time_override:
         localtz = pytz.timezone(request.registry.settings['local_timezone'])
         current_datetime = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(localtz)
 
@@ -61,7 +62,7 @@ def clock_in(request):
             raise ValueError('Invalid date format')
         timestamp = localtz.localize(local_timestamp).astimezone(pytz.utc)
     else:
-        timestamp = pytz.utc.localize(datetime.datetime.utcnow()),
+        timestamp = pytz.utc.localize(datetime.datetime.utcnow())
 
     user.close_current_session(timestamp)
 
