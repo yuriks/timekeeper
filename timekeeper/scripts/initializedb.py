@@ -47,6 +47,7 @@ def main(argv=sys.argv):
                          password_hash=generate_user_password('timekeeper'),
                          name="Administrator",
                          hourly_rate=0)
+        admin.admin = True
         DBSession.add(project)
         DBSession.add(period)
         DBSession.add(admin)
