@@ -26,6 +26,8 @@ from .models import (
 
 from .security import authenticate_user
 
+from . import fuzzy_date
+
 @view_config(route_name='dashboard', renderer='timekeeper:templates/dashboard.mak',
              permission='clock')
 def dashboard(request):
@@ -48,7 +50,20 @@ def dashboard(request):
 def clock_in(request):
     user_id = authenticated_userid(request)
     user = DBSession.query(Employee).get(user_id)
-    user.close_current_session()
+
+    if 'time_override' in request.params:
+        localtz = pytz.timezone(request.registry.settings['local_timezone'])
+        current_datetime = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(localtz)
+
+        local_timestamp = fuzzy_date.parse_fuzzy_datetime(
+                request.params['time_override'], current_datetime)
+        if not local_timestamp:
+            raise ValueError('Invalid date format')
+        timestamp = localtz.localize(local_timestamp).astimezone(pytz.utc)
+    else:
+        timestamp = pytz.utc.localize(datetime.datetime.utcnow()),
+
+    user.close_current_session(timestamp)
 
     if 'projectname' in request.params:
         project_name = request.params['projectname']
@@ -57,7 +72,7 @@ def clock_in(request):
         session = WorkSession(
                 employee=user,
                 project=Project.get_by_name(project_name),
-                start_time=pytz.utc.localize(datetime.datetime.utcnow()),
+                start_time=timestamp,
                 billing_period=BillingPeriod.get_current())
         DBSession.add(session)
 

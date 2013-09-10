@@ -20,6 +20,7 @@
 				<li><input type="submit" name="projectname" value="${project.name}"></li>
 				% endfor
 				<li><input type="submit" value="Clock Out"></li>
+				<li>Override time: <input type="text" name="time_override"></li>
 			</ul>
 		</form>
 		<p>
