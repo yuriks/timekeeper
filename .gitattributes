@@ -1,1 +1,4 @@
 * text=auto
+
+*.py text
+*.py[co] binary
