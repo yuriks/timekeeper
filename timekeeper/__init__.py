@@ -32,6 +32,8 @@ def main(global_config, **settings):
     config.add_route('clock_in', '/clock_in')
     config.add_route('admin', '/admin/')
     config.add_route('admin.employees', '/admin/employees/')
+    config.add_route('admin.employees.new', '/admin/employees/new/')
+    config.add_route('admin.employees.edit', '/admin/employees/{employee_id:\d+}/')
     config.add_route('admin.projects', '/admin/projects/')
     config.add_route('admin.periods', '/admin/periods/')
     config.add_route('login', '/login')

@@ -83,10 +83,22 @@ def clock_in(request):
 def admin(request):
     return {}
 
-@view_config(route_name='admin.employees', renderer='timekeeper:templates/admin.mak',
+@view_config(route_name='admin.employees', renderer='timekeeper:templates/admin_employees.mak',
              permission='manage')
 def admin_employees(request):
-    return {}
+    employees = DBSession.query(Employee).all()
+    return dict(
+            employees=employees,
+            )
+
+@view_config(route_name='admin.employees.edit', renderer='timekeeper:templates/admin_employees_edit.mak',
+             permission='manage')
+def admin_employees(request):
+    employee_id = int(request.matchdict['employee_id'])
+    employee = DBSession.query(Employee).get(employee_id)
+    return dict(
+            employee=employee,
+            )
 
 @view_config(route_name='admin.projects', renderer='timekeeper:templates/admin.mak',
              permission='manage')

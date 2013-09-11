@@ -1,6 +1,9 @@
 import pytz
 import datetime
 
+def yesno(val):
+    return 'Yes' if val else 'No'
+
 def format_localtime(req, utc_time):
     localtime = to_localtime(req, utc_time)
     return localtime.strftime('%c')
