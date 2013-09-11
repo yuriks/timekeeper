@@ -78,10 +78,25 @@ def clock_in(request):
 
     return HTTPFound(location=request.route_url('dashboard'))
 
-@view_config(route_name='admin', renderer='timekeeper:templates/dashboard.mak',
+@view_config(route_name='admin', renderer='timekeeper:templates/admin.mak',
              permission='manage')
 def admin(request):
-    pass
+    return {}
+
+@view_config(route_name='admin.employees', renderer='timekeeper:templates/admin.mak',
+             permission='manage')
+def admin_employees(request):
+    return {}
+
+@view_config(route_name='admin.projects', renderer='timekeeper:templates/admin.mak',
+             permission='manage')
+def admin_projects(request):
+    return {}
+
+@view_config(route_name='admin.periods', renderer='timekeeper:templates/admin.mak',
+             permission='manage')
+def admin_periods(request):
+    return {}
 
 @view_config(route_name='login', renderer='timekeeper:templates/login.mak')
 @forbidden_view_config(renderer='timekeeper:templates/login.mak')
