@@ -1,7 +1,6 @@
 from pyramid.config import Configurator
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.events import BeforeRender
 from sqlalchemy import engine_from_config
 
 from .models import (
@@ -10,10 +9,6 @@ from .models import (
     )
 
 from .security import authentication_policy
-from . import template_helpers
-
-def add_renderer_globals(event):
-    event['h'] = template_helpers
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -31,8 +26,6 @@ def main(global_config, **settings):
                           root_factory='timekeeper.security.RootFactory')
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
-
-    config.add_subscriber(add_renderer_globals, BeforeRender)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('dashboard', '/')
